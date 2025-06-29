@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mesin Energi Cikmat</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+background: #fff8d1;
+margin: 0;
+padding: 20px;
+text-align: center;
+}
+#loginBox, #mainContent {
+max-width: 500px;
+margin: auto;
+padding: 20px;
+background: #fff;
+border-radius: 10px;
+box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+#mainContent { display: none; }
+input, textarea, select, button {
+width: 90%;
+margin: 10px 0;
+padding: 12px;
+font-size: 16px;
+border: 1px solid #ccc;
+border-radius: 5px;
+}
+button {
+background: #880e4f;
+color: white;
+cursor: pointer;
+}
+button:hover {
+background: #ad1457;
+}
+#output {
+background: #fff;
+padding: 15px;
+border-radius: 8px;
+min-height: 80px;
+margin-top: 20px;
+text-align: left;
+}
+</style>
+</head>
+<body>
+
+<div id="loginBox">
+<h2>🔐 Masukkan Kata Laluan</h2>
+<input type="password" id="passwordInput" placeholder="Contoh: 12345" />
+<button onclick="checkPassword()">Masuk</button>
+<p id="loginError" style="color:red;"></p>
+</div>
+
+<div id="mainContent">
+<h1>🔆 Mesin Energi Cikmat</h1>
+<p>Masukkan niat & pancarkan kepada semesta 🌌</p>
+<textarea id="intention" placeholder="Contoh: Aku penuh kasih & rezeki melimpah..."></textarea>
+<select id="frequency">
+<option value="3600000">Optimal (1x/Jam)</option>
+<option value="128">Schumann (7.83 Hz)</option>
+<option value="333">Deep Delta (3 Hz)</option>
+<option value="1">Max Frequency</option>
+</select>
+<label><input type="checkbox" id="boost"> Power Boost (SHA‑512)</label>
+<input type="file" id="fileInput">
+<br>
+<button onclick="startRepeater()">Mula</button>
+<button onclick="stopRepeater()">Berhenti</button>
+<div id="output"></div>
+</div>
+
+<script>
+let interval, count = 0, startTime;
+
+function checkPassword() {
+const pwd = document.getElementById('passwordInput').value;
+if (pwd === "cikmatskytrex") {
+document.getElementById('loginBox').style.display = 'none';
+document.getElementById('mainContent').style.display = 'block';
+} else {
+document.getElementById('loginError').textContent = "❌ Kata laluan salah!";
+}
+}
+
+function startRepeater() {
+const txt = document.getElementById('intention').value.trim();
+const freq = parseInt(document.getElementById('frequency').value);
+const boost = document.getElementById('boost').checked;
+const file = document.getElementById('fileInput').files[0];
+const output = document.getElementById('output');
+
+if (!txt) return alert("🎯 Isi dulu niat tu!");
+
+alert("⚡ Energi affirmasi sedang dibina...\nTerima kasih menggunakan Mesin Energi Cikmat!");
+
+output.innerHTML = "";
+count = 0;
+startTime = Date.now();
+
+if (file) {
+const reader = new FileReader();
+reader.onload = e => {
+const hash = btoa(e.target.result);
+runRepeater(`${txt} + FILEHASH(${hash})`, freq, boost);
+};
+reader.readAsBinaryString(file);
+} else {
+runRepeater(txt, freq, boost);
+}
+}
+
+function runRepeater(msg, freq, boost) {
+const output = document.getElementById('output');
+interval = setInterval(() => {
+count++;
+let text = boost ? sha512(msg) : msg;
+const elapsed = ((Date.now() - startTime)/1000).toFixed(0);
+output.innerHTML = `🔁 ${text}<br>Ulangan: ${count} kali<br>Tempoh: ${elapsed}s`;
+}, freq);
+}
+
+function stopRepeater() {
+clearInterval(interval);
+document.getElementById('output').innerHTML += "<br>🛑 Pancaran dihentikan.";
+}
+
+function sha512(str) {
+return CryptoJS.SHA512(str).toString();
+}
+
+// load crypto-js
+const script = document.createElement('script');
+script.src = "https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js";
+document.head.appendChild(script);
+</script>
+
+</body>
+</html>
